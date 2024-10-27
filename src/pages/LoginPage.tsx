@@ -1,12 +1,45 @@
-function Login() {
-  const handleLogin = () => {};
+import { useForm } from "react-hook-form";
+import { useState } from "react";
+import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useAuth } from "../contexts/auth.context";
+import { LoginType } from "../types/AuthTypes";
+import { Eye, EyeClosed } from "lucide-react";
+import { Link } from "react-router-dom";
+
+const validation = Yup.object().shape({
+  email: Yup.string().email("Invalid email").required("Email is required"),
+  password: Yup.string()
+    .required("Password is required")
+    .matches(
+      /^(?=.*[A-Z])(?=.*\d)(?=.*\W)[A-Za-z\d\W]{7,20}$/,
+      "Invalid Password"
+    ),
+});
+
+function LoginPage() {
+  const [isVisible, setIsVisible] = useState(false);
+  const { login } = useAuth();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginType>({ resolver: yupResolver(validation) });
+
+  const handleLogin = (form: LoginType) => {
+    login({ email: form.email, password: form.password });
+  };
+
+  const toggleVisibility = () => {
+    setIsVisible(!isVisible);
+  };
 
   return (
     <div className="bg-base-200 flex items-center justify-center min-h-screen">
       <div className="card w-96 bg-base-100 shadow-xl">
         <div className="card-body">
-          <h2 className="card-title text-2xl font-bold mb-6">Login</h2>
-          <form>
+          <h2 className="card-title text-2xl font-bold mb-6">Log in</h2>
+          <form onSubmit={handleSubmit(handleLogin)}>
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Email</span>
@@ -25,8 +58,12 @@ function Login() {
                   type="email"
                   className="grow"
                   placeholder="email@example.com"
+                  {...register("email")}
                 />
               </label>
+              {errors.email && (
+                <p className="mt-1 text-sm text-info">{errors.email.message}</p>
+              )}
             </div>
             <div className="form-control mt-4">
               <label className="label">
@@ -46,11 +83,28 @@ function Login() {
                   />
                 </svg>
                 <input
-                  type="password"
+                  type={isVisible ? "text" : "password"}
                   className="grow"
                   placeholder="Enter password"
+                  {...register("password")}
                 />
+                <button
+                  type="button"
+                  className="flex items-center justify-center w-8 h-8"
+                  onClick={toggleVisibility}
+                >
+                  {isVisible ? (
+                    <Eye className="w-4 " />
+                  ) : (
+                    <EyeClosed className="w-4" />
+                  )}
+                </button>
               </label>
+              {errors.password && (
+                <p className="mt-1 text-sm text-info">
+                  {errors.password.message}
+                </p>
+              )}
               <label className="label">
                 <a href="#" className="label-text-alt link link-hover">
                   Forgot password?
@@ -58,15 +112,15 @@ function Login() {
               </label>
             </div>
             <div className="form-control mt-6">
-              <button className="btn btn-primary">Login</button>
+              <button className="btn btn-primary">Log in</button>
             </div>
           </form>
           <div className="divider">OR</div>
           <div className="text-center">
             <p>Don't have an account?</p>
-            <a href="#" className="link link-primary">
+            <Link to="/signup" className="link link-primary">
               Sign up now
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -74,4 +128,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default LoginPage;
