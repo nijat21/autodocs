@@ -11,7 +11,7 @@ export const loginApi = async (user: LoginType) => {
   return await axios.post<UserRes>(`${baseUrl}/login`, user);
 };
 
-export const verify = async (token) => {
+export const verify = async (token: string) => {
   return await axios.get<{ valid: boolean }>(`${baseUrl}/verify`, {
     headers: { Authorization: `Bearer ${token}` },
   });

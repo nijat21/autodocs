@@ -93,6 +93,7 @@ export const UserProvider = ({ children }: Props) => {
       }
     } catch (error) {
       handleError(error);
+      console.log(error);
     }
   };
 

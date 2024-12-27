@@ -14,7 +14,7 @@ const validation = Yup.object().shape({
     .required("Password is required")
     .matches(
       /^(?=.*[A-Z])(?=.*\d)(?=.*\W)[A-Za-z\d\W]{7,20}$/,
-      "Invalid Password"
+      "Password should have at least 1 uppercase letter, 1 number and 1 special character"
     ),
 });
 
